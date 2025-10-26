@@ -2,11 +2,38 @@ const canvas = document.getElementById("seesawCanvas");
 const ctx = canvas.getContext("2d");
 
 let angle = 0;
+let targetAngle = 0;
+const objects = [];
 
+canvas.addEventListener("click", onCanvasClick);
+
+
+function onCanvasClick(event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    const pivotY = canvas.height / 2 + 40;
+    if (y < pivotY - 40 || y > pivotY + 20) return; 
+
+    const distanceFromPivot = x - canvas.width / 2; 
+    const weight = Math.floor(Math.random() * 10) + 1;
+    objects.push({ x: distanceFromPivot, weight });
+    console.log(`Added object with weight ${weight} at distance ${distanceFromPivot}`);
+}
+function calculateTorque() {
+    let torque = 0;
+    for (const obj of objects) {
+        torque += obj.weight * obj.x;
+    }
+    targetAngle = Math.max(-30, Math.min(30, torque / 800)); // if torque is positive, tilt right; negative, tilt left
+}
 function drawSeesaw() {
     const pivotX = canvas.width / 2;
     const pivotY = canvas.height / 2 + 40;
     const seesawLength = 400;
+
+    angle += (targetAngle - angle) * 0.05; // Smooth transition to target angle
     
     ctx.save();
     ctx.translate(pivotX, pivotY);
@@ -15,6 +42,23 @@ function drawSeesaw() {
     // Draw seesaw plank
     ctx.fillStyle = "#8B4513";
     ctx.fillRect(-seesawLength / 2, -20, seesawLength, 20);
+
+    // Draw objects on seesaw
+    for (const obj of objects) {
+        ctx.beginPath();
+        ctx.arc(obj.x, -30, 12, 0, Math.PI * 2);
+        ctx.fillStyle = "#FF0000";
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#2F2F2F";
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(obj.weight, obj.x, -30);
+    }
 
     ctx.restore();
 
@@ -29,6 +73,7 @@ function drawSeesaw() {
 }
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    calculateTorque();
     drawSeesaw();
     requestAnimationFrame(draw);
 }
