@@ -86,21 +86,43 @@ A playground seesaw: a plank balanced on a center pivot. Users click anywhere on
 
 ## How It Works (Physics)
 
-Let each object have:
+For torque and balance calculation, the documentation suggests using:
+
+`angle = (rightTorque - leftTorque) / 10`
+
+In this implementation, the same physical principle is applied in a more compact way using a single summation:
+
+`Σ(weight × x)`
+
+The pivot is treated as the origin (x = 0).
+Positions to the left of the pivot have negative x values,
+and positions to the right have positive x values.
+
+This means the total sum of (weight × x) naturally gives the net torque difference:
+
+- Positive → the seesaw tilts right
+
+- Negative → the seesaw tilts left
+
+Thus, this formula is mathematically equivalent to (rightTorque - leftTorque) but simpler to implement and easier to visualize.
+
+**Torque per side**
+Each object has:
+```
 - `w` = weight in kg (1–10)  
 - `x` = horizontal distance from the pivot in pixels (left negative, right positive)
 
-**Torque per side**
 ```
-leftTorque = Σ (w * |x|) for x < 0
-rightTorque = Σ (w * |x|) for x ≥ 0
+Torque for each side:
+```
+leftTorque  = Σ (w * |x|)  for x < 0
+rightTorque = Σ (w * |x|)  for x ≥ 0
 
 ```
 ---
-**Angle (degrees)** is proportional to the **difference**:
+**Tilt Angle (Degrees)** 
+The tilt angle is proportional to the torque difference and limited between ±30°, as required in the brief:
 
-angle ≈ clamp(rightTorque - leftTorque) * k
-Clamp to ±30° (brief’s example):
 ```
 const MAX_ANGLE = 30;
 const angle = Math.max(
@@ -108,11 +130,20 @@ const angle = Math.max(
   Math.min(MAX_ANGLE, (rightTorque - leftTorque) / 10)
 );
 ```
-In this project, angle smoothly approaches the target:
+In this project, the displayed angle smoothly approaches the target angle for a realistic animation:
 ```
 angle += (targetAngle - angle) * 0.05; // eased animation
-
 ```
+Summary
+
+- Left side → negative x → negative torque
+
+- Right side → positive x → positive torque
+
+- Net torque defines the seesaw’s rotation direction
+
+- The plank rotates smoothly until balance is reached after each new object
+
 ---
 ## User Interaction & UI
 - Click anywhere along the plank (not the background). Off-plank clicks are ignored by checking the click region against the plank area.

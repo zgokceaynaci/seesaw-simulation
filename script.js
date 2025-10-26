@@ -54,6 +54,14 @@ function onCanvasClick(event) {
 
     console.log(`Added object with weight ${weight} at distance ${distanceFromPivot}`);
 }
+// !!!!!!!!!!!!!!!!!!!
+// Torque calculation explanation:
+// In the documentation example: angle = (rightTorque - leftTorque) / 10
+// Here, the same principle is applied more compactly.
+// We treat the pivot as the origin (x=0). Positions to the left have negative x,
+// and positions to the right have positive x. Therefore, Σ(weight * x)
+// naturally yields (rightTorque - leftTorque).
+// This makes the formula physically equivalent but simpler to implement.
 
 function calculateTorque() {
     let torque = 0;
