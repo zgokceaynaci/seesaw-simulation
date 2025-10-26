@@ -16,3 +16,23 @@ canvas {
     background-color: #fff;
     border-radius: 8px;
 }
+.hud {
+  margin-top: 16px;
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+.hud button {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.hud button:hover {
+  background: #334fc4;
+}
