@@ -21,6 +21,12 @@ const objects = []; // added objects
 
 canvas.addEventListener("click", onCanvasClick);
 
+function playClickSound() {
+  const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+  audio.volume = 0.3; 
+  audio.play();
+}
+
 function weightColor(w) {
   const t = (w - 1) / 9;              
   const hue = 200 - t * 140;          // Map weight to hue (200 to 60)
@@ -40,6 +46,9 @@ function onCanvasClick(event) {
     const distanceFromPivot = x - canvas.width / 2; //map position from pivot
     const weight = nextWeight;
     objects.push({ x: distanceFromPivot, weight });
+
+    playClickSound();
+
     nextWeight = Math.floor(Math.random() * 10) + 1;
     nextWeightEl.textContent = nextWeight;
 
@@ -83,8 +92,11 @@ function drawSeesaw() {
     for (const obj of objects) {
         ctx.beginPath();
         ctx.arc(obj.x, -30, 12, 0, Math.PI * 2);
-        ctx.fillStyle = "#FF0000";
+        ctx.fillStyle = weightColor(obj.weight);
+        ctx.shadowColor = "rgba(18, 0, 0, 0.25)";
+        ctx.shadowBlur = 6;
         ctx.fill();
+    
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#2F2F2F";
         ctx.stroke();
