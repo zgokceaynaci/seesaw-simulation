@@ -34,7 +34,9 @@
 Interactive, physics-driven seesaw built with only **HTML, CSS, and vanilla JavaScript**.  
 Click along the plank to drop objects with random weight (1–10 kg). The seesaw tilts smoothly using real torque logic. (Optional) state persistence lets your setup survive refreshes.
 
-**Live Demo (GitHub Pages):** https://zgokceaynaci.github.io/seesaw-simulation/
+
+**Live Demo (GitHub Pages):** _coming soon_
+
 
 ---
 
@@ -240,9 +242,11 @@ Branching: worked on feature branches like feature/visuals, feature/physics, fea
 ---
 ## AI Assistance Disclosure
 
-I used AI tools (ChatGPT) only for minor syntax corrections and visual structuring (e.g., centering HUD and layout refinements).
-All core logic, physics calculations, event handling, and overall structure were implemented and understood by me.
-I can clearly explain torque accumulation, angle clamping, easing animation, and the click → state → render flow.
+I used AI tools (ChatGPT) for minor syntax fixes, layout adjustments, and quick clarifications when needed.
+I also reviewed a few open-source JavaScript projects on GitHub to explore different approaches to physics calculations and animation handling.
+
+The main implementation, including the physics logic, event flow, and overall structure, was written manually.
+AI support was limited to improving readability and refining small details in the code and design.
 
 ---
 ## License
