@@ -35,7 +35,7 @@ Interactive, physics-driven seesaw built with only **HTML, CSS, and vanilla Java
 Click along the plank to drop objects with random weight (1–10 kg). The seesaw tilts smoothly using real torque logic. (Optional) state persistence lets your setup survive refreshes.
 
 
-**Live Demo (GitHub Pages):** _coming soon_
+**Live Demo (GitHub Pages):** https://zgokceaynaci.github.io/seesaw-simulation/
 
 
 ---
