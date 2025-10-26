@@ -38,15 +38,21 @@ function drawSeesaw() {
 
     // Draw all objects
     for (const obj of objects){
+        // drawing the circle
         ctx.beginPath();
-        ctx.arc(obj.x, -30, 10, 0, Math.PI * 2);
+        ctx.arc(obj.x, -30, 12, 0, Math.PI * 2);
         ctx.fillStyle = "#4682B4";
         ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#2F4F4F";
+        ctx.stroke();
 
-        ctx.fillStyle = "#000";
-        ctx.font = "10px Arial";
+        // drawing the weight text
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 14px Arial";
         ctx.textAlign = "center";
-        ctx.fillText(obj.weight, obj.x, -35);
+        ctx.textBaseline = "middle";
+        ctx.fillText(obj.weight, obj.x, -30);
     }
 
     ctx.restore();
