@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seesaw Simulation</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seesaw Simulation</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<div class="hud">
-  <div>Left: <span id="left-weight">0</span> kg</div>
-  <div>Next: <span id="next-weight">–</span> kg</div>
-  <div>Right: <span id="right-weight">0</span> kg</div>
-  <div>Angle: <span id="tilt-angle">0°</span></div>
-  <button id="reset-btn">🔄 Reset</button>
-</div>
 <body>
-    <div id="app">
-        <canvas id="seesawCanvas" width="600" height="400"></canvas>
-    </div>
-    <script src="script.js"></script>
+  <main class="container">
+    <!-- HUD (üst kısım) -->
+    <section class="hud">
+      <div>Left: <span id="left-weight">0</span> kg</div>
+      <div>Next: <span id="next-weight">–</span> kg</div>
+      <div>Right: <span id="right-weight">0</span> kg</div>
+      <div>Angle: <span id="tilt-angle">0°</span></div>
+    </section>
+
+    <!-- Seesaw area -->
+    <section class="playground">
+      <canvas id="seesawCanvas" width="600" height="400"></canvas>
+    </section>
+
+    <!-- Reset button -->
+    <section class="controls">
+      <button id="reset-btn">🔄 Reset Seesaw</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
