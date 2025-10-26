@@ -1,7 +1,7 @@
 const canvas = document.getElementById("seesawCanvas");
 const ctx = canvas.getContext("2d");
 
-let angle = 0;
+let angle = 0; 
 let targetAngle = 0;
 const objects = [];
 
@@ -26,7 +26,7 @@ function calculateTorque() {
     for (const obj of objects) {
         torque += obj.weight * obj.x;
     }
-    targetAngle = Math.max(-30, Math.min(30, torque / 800)); // if torque is positive, tilt right; negative, tilt left
+    targetAngle = Math.max(-30, Math.min(30, torque / 200)); // if torque is positive, tilt right; negative, tilt left
 }
 function drawSeesaw() {
     const pivotX = canvas.width / 2;
