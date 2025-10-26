@@ -1,3 +1,16 @@
+const leftWeightEl = document.getElementById("left-weight");
+const rightWeightEl = document.getElementById("right-weight");
+const nextWeightEl = document.getElementById("next-weight");
+const tiltAngleEl = document.getElementById("tilt-angle");
+const resetBtn = document.getElementById("reset-btn");
+
+let nextWeight = Math.floor(Math.random() * 10) + 1;
+nextWeightEl.textContent = nextWeight;
+
+let leftWeight = 0;
+let rightWeight = 0;
+const STORAGE_KEY = "seesaw-state-v1";
+
 const canvas = document.getElementById("seesawCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -7,6 +20,12 @@ const objects = []; // added objects
 
 
 canvas.addEventListener("click", onCanvasClick);
+
+function weightColor(w) {
+  const t = (w - 1) / 9;              
+  const hue = 200 - t * 140;          // Map weight to hue (200 to 60)
+  return `hsl(${hue} 80% 50%)`;
+}
 
 function onCanvasClick(event) {
     const rect = canvas.getBoundingClientRect();
@@ -19,17 +38,31 @@ function onCanvasClick(event) {
         return; // Ignore clicks outside the seesaw area
     }
     const distanceFromPivot = x - canvas.width / 2; //map position from pivot
-    const weight = Math.floor(Math.random() * 10) + 1; // Random weight between 1 and 10
+    const weight = nextWeight;
     objects.push({ x: distanceFromPivot, weight });
+    nextWeight = Math.floor(Math.random() * 10) + 1;
+    nextWeightEl.textContent = nextWeight;
+
     console.log(`Added object with weight ${weight} at distance ${distanceFromPivot}`);
 }
 
 function calculateTorque() {
     let torque = 0;
+    leftWeight = 0;
+    rightWeight = 0;
     for (const obj of objects) {
         torque += obj.weight * obj.x;
+        if (obj.x < 0) {
+            leftWeight += obj.weight;
+        } else {
+            rightWeight += obj.weight;
+        }
     }
     targetAngle = Math.max(-30, Math.min(30, torque / 200)); // if torque is positive, tilt right; negative, tilt left
+    leftWeightEl.textContent = leftWeight;
+    rightWeightEl.textContent = rightWeight;
+    tiltAngleEl.textContent = `${targetAngle.toFixed(1)}°`;
+
 }
 function drawSeesaw() {
     const pivotX = canvas.width / 2;
@@ -84,4 +117,17 @@ function draw() {
 function init() {
     draw();
 }
+resetBtn.addEventListener("click", () => {
+  objects.length = 0;
+  leftWeight = 0;
+  rightWeight = 0;
+  angle = 0;
+  targetAngle = 0;
+  nextWeight = Math.floor(Math.random() * 10) + 1;
+  nextWeightEl.textContent = nextWeight;
+  leftWeightEl.textContent = 0;
+  rightWeightEl.textContent = 0;
+  tiltAngleEl.textContent = "0°";
+});
+
 init();
