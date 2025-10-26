@@ -3,24 +3,27 @@ const ctx = canvas.getContext("2d");
 
 let angle = 0; 
 let targetAngle = 0;
-const objects = [];
+const objects = []; // added objects
+
 
 canvas.addEventListener("click", onCanvasClick);
-
 
 function onCanvasClick(event) {
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-    
-    const pivotY = canvas.height / 2 + 40;
-    if (y < pivotY - 40 || y > pivotY + 20) return; 
 
-    const distanceFromPivot = x - canvas.width / 2; 
-    const weight = Math.floor(Math.random() * 10) + 1;
+    const pivotY = canvas.height / 2 + 40;
+    if (y < pivotY - 40 || y > pivotY + 20){
+        console.log("Click outside the seesaw area");
+        return; // Ignore clicks outside the seesaw area
+    }
+    const distanceFromPivot = x - canvas.width / 2; //map position from pivot
+    const weight = Math.floor(Math.random() * 10) + 1; // Random weight between 1 and 10
     objects.push({ x: distanceFromPivot, weight });
     console.log(`Added object with weight ${weight} at distance ${distanceFromPivot}`);
 }
+
 function calculateTorque() {
     let torque = 0;
     for (const obj of objects) {
@@ -62,6 +65,7 @@ function drawSeesaw() {
 
     ctx.restore();
 
+    
     // Draw pivot
     ctx.beginPath();
     ctx.moveTo(pivotX - 20, pivotY + 10);
