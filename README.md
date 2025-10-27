@@ -15,7 +15,7 @@
 
 **Click Interaction**
 
-!![Click Example](assets/example2.png)
+![Click Example](assets/example2.png)
 
 ![Drop Action](assets/example5.png)
 
@@ -29,18 +29,18 @@
 
 ![Weight Color Variation](assets/example5.png)
 
-*(Demo video will be added soon.)*
 
-Interactive, physics-driven seesaw built with only **HTML, CSS, and vanilla JavaScript**.  
-Click along the plank to drop objects with random weight (1–10 kg). The seesaw tilts smoothly using real torque logic. (Optional) state persistence lets your setup survive refreshes.
+Interactive, physics-driven seesaw built with HTML, CSS, and vanilla JavaScript.
+Click anywhere on the plank to drop objects with random weights (1–10 kg).
+The seesaw tilts smoothly using real torque logic — just like in real life.
 
-
-**Live Demo (GitHub Pages):** https://zgokceaynaci.github.io/seesaw-simulation/
+Live Demo (GitHub Pages): https://zgokceaynaci.github.io/seesaw-simulation/ 
 
 
 ---
 
 ## Table of Contents
+
 - [Goal & Scenario](#goal--scenario)
 - [Features](#features)
 - [How It Works (Physics)](#how-it-works-physics)
@@ -48,13 +48,13 @@ Click along the plank to drop objects with random weight (1–10 kg). The seesaw
 - [Persistence](#persistence)
 - [Project Structure](#project-structure)
 - [Run Locally](#run-locally)
-- [Deploy (GitHub Pages)](#deploy-github-pages)
 - [Development Process & Commits](#development-process--commits)
 - [Design Decisions](#design-decisions)
 - [Trade-offs & Limitations](#trade-offs--limitations)
 - [Challenges Faced](#challenges-faced)
 - [AI Assistance Disclosure](#ai-assistance-disclosure)
 - [License](#license)
+- [Project Status](#project-status)
 
 ---
 
@@ -68,94 +68,58 @@ Preview reference: https://seesaw.samet-sevindi.workers.dev/
 A playground seesaw: a plank balanced on a center pivot. Users click anywhere on the plank to drop objects. Each object’s weight is random (1–10 kg). The seesaw rebalances smoothly based on **all** placed objects.
 
 ---
-
 ## Features
 
 - **Pure JS/HTML/CSS** — no frameworks or libraries.
+- **Clean, minimal UI** (HUD + Reset button).
 - **Accurate placement:** objects appear **exactly where you click** on the plank.
-- **Physics-based tilt** using torque:
-  - Per side torque: `Σ(weight × distanceFromPivot)`
+- **Real-time torque calculation:**
+  - Per-side torque: `Σ(weight × distanceFromPivot)`
   - Angle proportional to torque difference, **clamped to ±30°**
-- **Smooth animation** (eased approach to target angle).
-- **Live HUD:** Left total (kg), Next weight (kg), Right total (kg), current Tilt angle (°).
+- **Random weight generation (1–10 kg).**
+- **Sound feedback** when objects drop.
 - **Reset** button to clear the scene quickly.
-- **Optional sound feedback** on drops (short pop).
-- **(Optional) Persistence** via `localStorage` so your scene survives refreshes.
-
+- **Lightweight and responsive.**
+- **(In progress) Persistence** via `localStorage` so your scene survives refreshes.
 ---
-
 ## How It Works (Physics)
 
-For torque and balance calculation, the documentation suggests using:
+Each dropped object has a weight (1–10 kg) and a distance from the pivot.  
+The seesaw’s tilt is determined by the sum of all `(weight × distance)` values — this gives the **net torque**.
 
-`angle = (rightTorque - leftTorque) / 10`
+- Left side → negative torque (tilts left)  
+- Right side → positive torque (tilts right)
 
-In this implementation, the same physical principle is applied in a more compact way using a single summation:
+The result is clamped between ±30° for a natural limit, and the seesaw smoothly transitions toward that angle:
 
-`Σ(weight × x)`
-
-The pivot is treated as the origin (x = 0).
-Positions to the left of the pivot have negative x values,
-and positions to the right have positive x values.
-
-This means the total sum of (weight × x) naturally gives the net torque difference:
-
-- Positive → the seesaw tilts right
-
-- Negative → the seesaw tilts left
-
-Thus, this formula is mathematically equivalent to (rightTorque - leftTorque) but simpler to implement and easier to visualize.
-
-**Torque per side**
-Each object has:
+```js
+angle += (targetAngle - angle) * 0.05;
 ```
-- `w` = weight in kg (1–10)  
-- `x` = horizontal distance from the pivot in pixels (left negative, right positive)
-
-```
-Torque for each side:
-```
-leftTorque  = Σ (w * |x|)  for x < 0
-rightTorque = Σ (w * |x|)  for x ≥ 0
-
-```
----
-**Tilt Angle (Degrees)** 
-The tilt angle is proportional to the torque difference and limited between ±30°, as required in the brief:
-
-```
-const MAX_ANGLE = 30;
-const angle = Math.max(
-  -MAX_ANGLE,
-  Math.min(MAX_ANGLE, (rightTorque - leftTorque) / 10)
-);
-```
-In this project, the displayed angle smoothly approaches the target angle for a realistic animation:
-```
-angle += (targetAngle - angle) * 0.05; // eased animation
-```
-Summary
-
-- Left side → negative x → negative torque
-
-- Right side → positive x → positive torque
-
-- Net torque defines the seesaw’s rotation direction
-
-- The plank rotates smoothly until balance is reached after each new object
-
+In short — every click adds weight, torque updates, and the plank rebalances itself dynamically like a real seesaw.
 ---
 ## User Interaction & UI
-- Click anywhere along the plank (not the background). Off-plank clicks are ignored by checking the click region against the plank area.
+
+- Click anywhere along the plank (not on the background).  
+  Off-plank clicks are ignored by checking whether the click position falls within the plank area.
+
 - A random weight (1–10 kg) is generated and placed at the click’s horizontal offset from the pivot.
-- The simulation recalculates torque, updates Left/Right totals, and tilts smoothly.
-- HUD (top): shows Left, Next, Right, and Angle.
-- Reset button (bottom): clears all objects and resets angle to 0°.
-- Colors: disc color is mapped to weight (lighter → cooler hues, heavier → warmer hues); labels are white and centered for readability.
-- Sound: A short “pop” plays on each drop for feedback.
 
+- The simulation recalculates torque, updates **Left**, **Right**, and **Angle** values, and smoothly adjusts the tilt.
+
+- The **HUD** (top) displays:
+  - **Left:** total torque or weight on the left side  
+  - **Next:** upcoming random weight  
+  - **Right:** total torque or weight on the right side  
+  - **Angle:** current seesaw tilt in degrees
+
+- The **Reset** button (bottom) clears all objects and resets the angle to 0°.
+
+- **Colors:** each disc’s color corresponds to its weight  
+  (lighter = cooler hues, heavier = warmer hues).  
+  Labels are white and centered for readability.
+
+- **Sound:** a short “pop” plays on each drop for instant feedback.
 ---
-
 ## Persistence
 
 Simple helpers are included:
@@ -163,9 +127,9 @@ Simple helpers are included:
 STORAGE_KEY = "seesaw-state-v1"
 
 ```
-- Store array of { x, weight } and (optionally) nextWeight.
+- You can store an array of { x, weight } and reload it after refresh.
 
-- Load on start, save after each drop (you can comment these out if you don’t want persistence).
+(Currently optional / not finalized)
 ---
 
 ## Project Structure
@@ -187,89 +151,56 @@ seesaw-simulation/
 ```
 ---
 ## Run Locally
-
-Open index.html directly in a browser, or
-
-Start a tiny server:
-
-VS Code Live Server or
-
-python3 -m http.server → open http://localhost:8000
-
----
-## Deploy (GitHub Pages)
-
-1. Push to main of your public repository.
-
-2. GitHub → Settings → Pages
-
-- Source: Deploy from a branch
-
-- Branch: main / /(root)
-
-3. Your site will be available at:
 ```
-https://<your-username>.github.io/seesaw-simulation/
-
+git clone https://github.com/zgokceaynaci/seesaw-simulation.git
+cd seesaw-simulation
 ```
+# open index.html in your browser
+
 ---
 ## Development Process & Commits
 
-Small, focused commits reflecting incremental steps:
+The project was developed incrementally — each feature on its own branch:
 
-- feat(setup): initialize basic project structure with HTML, CSS, and JS files
+- feature/visuals → Canvas setup
 
-- feat(visuals): draw seesaw plank and pivot on canvas
+- feature/physics → torque + tilt logic
 
-- fix(interaction): enable click detection on seesaw canvas
+- feature/ui → HUD and reset button
 
-- feat(objects): render weight discs with labels at clicked positions
+- feature/sound → sound effects
 
-- feat(physics): compute torque and tilt with smooth easing
+All merged into main through pull requests for clean version control.
 
-- feat(ui): add HUD stats and reset button
-
-- feat(sound): add pop sound effect on click
-
-- refactor(style): polish colors and shadows for readability
-
-Branching: worked on feature branches like feature/visuals, feature/physics, feature/ui, then merged via PRs to main.
-
+This kept everything organized and easy to test.
 ---
 ## Design Decisions
 
-- Canvas for drawing/animation keeps logic simple and fast.
+- Canvas used for performance and simplicity.
 
-- Eased animation feels natural without heavy spring/physics complexity.
+- Eased animation provides smooth, natural motion.
 
-- Click validation ensures only plank clicks are processed.
+- Click detection limited to plank area for better UX.
 
-- Readability-first: bold labels on colored discs, minimal HUD.
+- Clean HUD layout for readability.
 
-- No external libraries to comply with the brief.
+- No frameworks — pure, lightweight JavaScript focus.
 ---
 ## Trade-offs & Limitations
 
-- Visual scale uses pixels as lever arm; intuitive but not unit-accurate physics.
-
-- Angle clamp ±30° for clarity and UX.
-
-- No collision handling; discs can overlap (intentional for simplicity).
-
-- Mobile: basic tap works; drag/drop and haptics are not implemented.
+- Torque uses pixel-based distance (not real-world units).
+- Angle limited to ±30° for usability.
+- No collision physics (weights can overlap intentionally).
+- Works on mobile (tap), but no drag or haptic feedback.
 ---
 ## Challenges Faced
 
-- UI alignment & layout: Centering HUD/canvas/reset required iterative CSS tuning.
+- Balancing visuals with math — fine-tuning torque logic.
+- Syntax typos during rapid prototyping
+- HUD alignment and responsive CSS tweaks.
+- Occasional Git conflicts when merging feature branches.
 
-- Naming & syntax mistakes: Fast iteration led to occasional typos and “undefined” errors; solved via careful debugging and consistent naming.
-
-- Git conflicts: Parallel UI/logic work produced conflicts; got resolved by staging smaller changes and reviewing diffs carefully.
-
-- Math/logic iterations: Translating torque & balance into working code needed a few passes; wrong scope/placement sometimes caused no effect.
-
-- Hit-testing: Ensuring clicks register only on the plank required refining the click bounds.
-
+But every challenge helped me learn to debug smarter and commit more carefully.
 ---
 ## AI Assistance Disclosure
 
@@ -283,3 +214,7 @@ AI support was limited to improving readability and refining small details in th
 ## License
 
 MIT — feel free to use and modify with attribution.
+---
+## Project Status
+
+Completed — fully functional and deployed with GitHub Pages
